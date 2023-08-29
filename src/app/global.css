@@ -6,9 +6,12 @@ input {
   outline: none;
   border: none;
 }
+a {
+  text-decoration: none;
+}
 body::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+  height: 25px;
+  width: 25px;
 }
 .queue::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -18,4 +21,8 @@ body::-webkit-scrollbar {
 }
 .queue::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+div .active_filter {
+  background: black;
+  color: white;
 }

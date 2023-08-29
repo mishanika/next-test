@@ -1,10 +1,10 @@
-import Image from "next/image";
 import styles from "./page.module.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-const PhotoPopup = ({ activePhoto, previewPhotos, setOpenedPhoto }) => {
+const PhotoPopup = ({ activePhoto, photos, setOpenedPhoto }) => {
   const popupRef = useRef(null);
-
+  const [activePhotoInner, setActivePhotoInner] = useState(activePhoto);
+  console.log(photos);
   return (
     <div
       className={styles.popup_wrapper}
@@ -14,14 +14,33 @@ const PhotoPopup = ({ activePhoto, previewPhotos, setOpenedPhoto }) => {
       }
     >
       <div className={styles.popup_inner_wrapper}>
-        <Image
-          src={previewPhotos[activePhoto]}
-          alt="preview photo"
-          width={0}
-          height={0}
-          sizes="100%"
-          style={{ width: "100%", height: "100%", maxHeight: "80%" }}
-        />
+        <span
+          onClick={() =>
+            activePhotoInner - 1 <= 0 ? setActivePhotoInner(photos.length - 1) : setActivePhotoInner((prev) => prev - 1)
+          }
+        >
+          {"<"}
+        </span>
+        <picture>
+          <img
+            src={photos[activePhotoInner]}
+            alt="preview photo"
+            sizes="100vw"
+            style={{
+              maxHeight: "85vh",
+              padding: "50px 20px",
+
+              background: "white",
+            }}
+          />
+        </picture>
+        <span
+          onClick={() =>
+            activePhotoInner + 1 >= photos.length ? setActivePhotoInner(0) : setActivePhotoInner((prev) => prev + 1)
+          }
+        >
+          {">"}
+        </span>
       </div>
     </div>
   );

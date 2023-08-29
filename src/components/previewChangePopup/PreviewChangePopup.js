@@ -40,7 +40,7 @@ const PreviewChangePopup = ({ setPopup, setCollectionPreview }) => {
           <div className={styles.dragndrop}>
             <input
               type="file"
-              onChange={(e) => setCollection((prev) => ({ ...prev, 2: { ...e.target.files[0] } }))}
+              onChange={(e) => setCollection((prev) => ({ ...prev, 2: { ...e.target.files } }))}
               className={styles.input_file}
             />
             <span>Insert third photo</span>
@@ -48,7 +48,7 @@ const PreviewChangePopup = ({ setPopup, setCollectionPreview }) => {
           <div className={styles.dragndrop}>
             <input
               type="file"
-              onChange={(e) => setCollection((prev) => ({ ...prev, 3: { ...e.target.files[0] } }))}
+              onChange={(e) => setCollection((prev) => ({ ...prev, 3: { ...e.target.files } }))}
               className={styles.input_file}
             />
             <span>Insert fourth photo</span>

@@ -17,6 +17,10 @@ const AdminPage = () => {
   }, [selectedFiles]);
 
   const handleUpload = async () => {
+    if (collectionPreview.length < 4) {
+      alert("Upload preview");
+      return;
+    }
     if (selectedFiles) {
       const collection = new FormData();
       const preview = new FormData();

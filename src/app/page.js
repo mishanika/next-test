@@ -1,15 +1,15 @@
 "use client";
-import Image from "next/image";
 import styles from "./page.module.css";
-import firstPhoto from "../../public/1.jpg";
-import secondPhoto from "../../public/2.jpg";
-import thirdPhoto from "../../public/3.jpg";
-import fourthPhoto from "../../public/4.jpg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PhotoPopup from "@/components/photoPopup/PhotoPopup";
+import Link from "next/link";
+import { filterText } from "@/text/mainText";
 
 const Main = () => {
+  const tagsRef = useRef([]);
   const [collection, setCollection] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchedCollections, setSearchedCollections] = useState(null);
   const [openedPhoto, setOpenedPhoto] = useState({ openedPreview: false, activePhoto: 0, collectionId: 0 });
 
   useEffect(() => {
@@ -17,6 +17,46 @@ const Main = () => {
       .then((data) => data.json())
       .then((data) => setCollection(data));
   }, []);
+
+  const searchByTags = (e) => {
+    e.target.classList.toggle("active_filter");
+    const actives = tagsRef.current.filter((item) => item.classList.contains("active_filter"));
+    console.log(actives);
+
+    if (e.target.textContent === "All" || !actives.length) {
+      tagsRef.current.forEach((item) => item.classList.remove("active_filter"));
+      setSearchedCollections(null);
+      return;
+    }
+
+    setSearchedCollections(
+      collection.filter((item) => actives.some((tag) => item.tags.includes(tag.textContent.toLowerCase())))
+    );
+  };
+
+  const searchByText = () => {
+    setSearchedCollections(
+      collection.filter((item) => item.collectionName.toLowerCase().includes(searchInput.toLowerCase()))
+    );
+  };
+
+  const debounce = (func, timeoutMs) => {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+
+      timer = setTimeout(func(...args), timeoutMs);
+    };
+  };
+  const hello = () => {
+    console.log("hello");
+  };
+  const searchWithDebounce = debounce(hello, 3000);
+
+  const inputHandler = (e) => {
+    setSearchInput(e.target.value);
+    searchWithDebounce();
+  };
 
   const renderCollectionItems = ({ collectionName, previewURLS }, id) => (
     <div className={styles.colection_item}>
@@ -27,6 +67,7 @@ const Main = () => {
           className={styles.collection_preview_img}
           onClick={() => setOpenedPhoto((prev) => ({ activePhoto: 0, openedPreview: true, collectionId: id }))}
         />
+
         <div className={styles.bottom_img}>
           <img
             src={previewURLS[1]}
@@ -34,12 +75,14 @@ const Main = () => {
             className={styles.collection_preview_img}
             onClick={() => setOpenedPhoto((prev) => ({ activePhoto: 1, openedPreview: true, collectionId: id }))}
           />
+
           <img
             src={previewURLS[2]}
             alt="colletion item"
             className={styles.collection_preview_img}
             onClick={() => setOpenedPhoto((prev) => ({ activePhoto: 2, openedPreview: true, collectionId: id }))}
           />
+
           <img
             src={previewURLS[3]}
             alt="colletion item"
@@ -50,13 +93,21 @@ const Main = () => {
       </div>
       <div className={styles.collection_name}>
         {collectionName}{" "}
-        <div
-          className={styles.open_btn}
-          onClick={() => setOpenedPhoto((prev) => ({ ...prev, openedCollection: true }))}
+        <Link
+          href={{
+            pathname: "/photoCollection",
+            query: { collectionName: collectionName },
+          }}
         >
-          Open
-        </div>
+          <div className={styles.open_btn}>Open</div>
+        </Link>
       </div>
+    </div>
+  );
+
+  const filterRender = (item, i) => (
+    <div className={styles.filter_item} ref={(el) => (tagsRef.current[i] = el)} onClick={(e) => searchByTags(e)}>
+      {item}
     </div>
   );
 
@@ -64,7 +115,7 @@ const Main = () => {
     <>
       {openedPhoto.openedPreview ? (
         <PhotoPopup
-          previewPhotos={collection[openedPhoto.collectionId].previewURLS}
+          photos={collection[openedPhoto.collectionId].previewURLS}
           activePhoto={openedPhoto.activePhoto}
           setOpenedPhoto={setOpenedPhoto}
         />
@@ -75,14 +126,18 @@ const Main = () => {
         <div className={styles.page_inner_wrapper}>
           <div className={styles.header}>My photo collection</div>
           <div className={styles.filters}>
-            <div className={styles.filter_item}>All</div>
-            <div className={styles.filter_item}>Mountains</div>
-            <div className={styles.filter_item}>Sea</div>
-            <div className={styles.filter_item}>Architecture</div>
-            <div className={styles.filter_item}>Cities</div>
-            <input className={styles.search} placeholder="Enter collection name" />{" "}
+            {filterText.map(filterRender)}
+            <input
+              className={styles.search}
+              placeholder="Enter collection name"
+              onChange={(e) => inputHandler(e)}
+            />{" "}
           </div>
-          <div className={styles.collection}>{collection.map(renderCollectionItems)}</div>
+          <div className={styles.collection}>
+            {searchedCollections
+              ? searchedCollections.map(renderCollectionItems)
+              : collection.map(renderCollectionItems)}
+          </div>
         </div>
       </div>
     </>

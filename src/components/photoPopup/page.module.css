@@ -9,14 +9,14 @@
   z-index: 1;
 }
 .popup_inner_wrapper {
-  max-height: 70%;
-  padding: 50px 50px;
-  border-radius: 0.75rem;
-  background: white;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: space;
   align-items: center;
-  gap: 15px;
-  position: relative;
+  padding: 0 20px;
+  background: white;
+  border-radius: 0.75rem;
+  font-size: 2rem;
+}
+.popup_inner_wrapper > span {
+  cursor: pointer;
 }
