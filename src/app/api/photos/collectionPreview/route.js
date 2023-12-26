@@ -4,6 +4,7 @@ import process from "process";
 import fs from "fs";
 
 export const config = {
+  runtime: "nodejs",
   api: {
     bodyParser: false,
   },
