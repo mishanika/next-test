@@ -4,11 +4,12 @@ import process from "process";
 import fs from "fs";
 
 export const config = {
-  runtime: "nodejs",
   api: {
     bodyParser: false,
   },
 };
+
+export const runtime = "edge";
 
 export async function POST(request) {
   try {
